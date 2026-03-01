@@ -1,12 +1,693 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Калькулятор времени: сколько часов уходит в телефон и на что можно потратить это время вместо скролла." />
+  <title>Время вместо телефона — калькулятор и идеи</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --card2:#0f1730;
+      --text:#e8ecff;
+      --muted:#b8c0ff;
+      --line: rgba(255,255,255,.10);
+      --accent:#8b5cf6;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(139,92,246,.28), transparent 60%),
+        radial-gradient(1000px 650px at 80% 0%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 700px at 70% 80%, rgba(245,158,11,.14), transparent 55%),
+        var(--bg);
+      line-height:1.55;
+    }
+    a{ color:inherit }
+    .container{ width:min(1100px, 92vw); margin:0 auto; padding:28px 0 60px }
+    header{
+      display:flex; gap:18px; align-items:flex-start; justify-content:space-between;
+      margin-top:8px;
+    }
+    .brand{
+      display:flex; gap:14px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(139,92,246,1), rgba(34,197,94,1));
+      box-shadow: var(--shadow);
+    }
+    .hgroup h1{ margin:0; font-size: clamp(24px, 3vw, 34px); letter-spacing:.2px }
+    .hgroup p{ margin:6px 0 0; color:var(--muted); max-width:56ch }
+    nav{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+      margin-top:4px;
+    }
+    .pill{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      text-decoration:none;
+      font-size:14px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .pill:hover{ transform: translateY(-1px); border-color: rgba(139,92,246,.55); background: rgba(139,92,246,.08) }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:18px;
+      margin-top:22px;
+    }
+    @media (max-width: 900px){
+      header{ flex-direction:column; align-items:stretch }
+      nav{ justify-content:flex-start }
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .inner{ padding:18px 18px 16px }
+    .card h2{ margin:0 0 8px; font-size:18px }
+    .card p{ margin:0 0 10px; color:var(--muted) }
+
+    .hero{
+      padding:18px;
+      position:relative;
+    }
+    .hero .panel{
+      background: rgba(0,0,0,.18);
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding:14px;
+      margin-top:12px;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .controls{ grid-template-columns: 1fr; }
+    }
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(15,23,48,.65);
+      color: var(--text);
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color: rgba(139,92,246,.7);
+      box-shadow: 0 0 0 3px rgba(139,92,246,.18);
+    }
+    .btnrow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+      align-items:center;
+    }
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius: 14px;
+      padding:12px 14px;
+      font-weight:600;
+      color: var(--text);
+      background: rgba(139,92,246,.9);
+      transition: transform .1s ease, filter .15s ease;
+    }
+    button:hover{ filter: brightness(1.05) }
+    button:active{ transform: translateY(1px) }
+    .btn-ghost{
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      font-weight:600;
+    }
+    .tiny{
+      font-size:12px;
+      color: var(--muted);
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width: 700px){
+      .kpis{ grid-template-columns: 1fr; }
+    }
+    .kpi{
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding:12px;
+    }
+    .kpi .num{ font-size:20px; font-weight:800; letter-spacing:.2px }
+    .kpi .cap{ font-size:12px; color:var(--muted); margin-top:4px }
+    .bar{
+      height:10px; border-radius: 999px; background: rgba(255,255,255,.06);
+      overflow:hidden; margin-top:10px; border:1px solid var(--line);
+    }
+    .bar > div{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(34,197,94,.95), rgba(139,92,246,.95));
+      transition: width .35s ease;
+    }
+
+    .section{
+      margin-top:18px;
+    }
+    .section-title{
+      display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+      padding:0 2px;
+    }
+    .section-title h3{ margin:0; font-size:16px }
+    .section-title span{ color:var(--muted); font-size:12px }
+
+    .list{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    .idea{
+      display:flex;
+      gap:12px;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .badge{
+      min-width:40px; height:40px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      background: rgba(139,92,246,.18);
+      border:1px solid rgba(139,92,246,.35);
+      font-size:18px;
+    }
+    .idea h4{ margin:0; font-size:14px }
+    .idea p{ margin:4px 0 0; color:var(--muted); font-size:13px }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
+    .chip{
+      font-size:12px;
+      color: var(--muted);
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    .checklist{
+      display:grid; gap:10px; margin-top:10px;
+    }
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .check input{ width:18px; height:18px; margin-top:2px }
+    .check .t{ font-size:14px }
+    .check .s{ font-size:12px; color:var(--muted); margin-top:2px }
+
+    details{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding:10px 12px;
+    }
+    details + details{ margin-top:10px }
+    summary{
+      cursor:pointer;
+      font-weight:700;
+      outline:none;
+    }
+    details p{ color:var(--muted); margin:8px 0 0; font-size:13px }
+
+    footer{
+      margin-top:22px;
+      padding:14px 2px 0;
+      color: var(--muted);
+      font-size:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      border-top:1px solid var(--line);
+    }
+    .right a{ text-decoration:none; border-bottom:1px dashed rgba(184,192,255,.35) }
+  </style>
 </head>
 <body>
-    <h1>Hello World!!!!111!</h1>
-</body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="hgroup">
+          <h1>«Время вместо телефона»</h1>
+          <p>Сайт для индивидуального проекта: калькулятор экранного времени, идеи для замены скролла и мини-теория про привычки.</p>
+        </div>
+      </div>
+      <nav>
+        <a class="pill" href="#calc">Калькулятор</a>
+        <a class="pill" href="#ideas">Идеи</a>
+        <a class="pill" href="#check">Чек-лист</a>
+        <a class="pill" href="#theory">Теория</a>
+      </nav>
+    </header>
 
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card hero" id="calc">
+        <div class="inner">
+          <h2>Калькулятор: «сколько времени “съедает” телефон»</h2>
+          <p>Введи своё среднее время в телефоне и посмотри, сколько часов получается за неделю/месяц/учебный год — и что можно успеть вместо этого.</p>
+
+          <div class="panel" role="group" aria-label="Параметры расчёта">
+            <div class="controls">
+              <div>
+                <label for="daily">Время в телефоне в день</label>
+                <input id="daily" type="number" min="0" step="0.1" placeholder="Например: 3.5" />
+                <div class="tiny" style="margin-top:6px">Можно взять из «Экранного времени» / Digital Wellbeing.</div>
+              </div>
+              <div>
+                <label for="unit">Единицы</label>
+                <select id="unit">
+                  <option value="hours" selected>Часы</option>
+                  <option value="minutes">Минуты</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="period">Период</label>
+                <select id="period">
+                  <option value="week">Неделя (7 дней)</option>
+                  <option value="month">Месяц (30 дней)</option>
+                  <option value="schoolyear" selected>Учебный год (34 недели)</option>
+                  <option value="year">Год (365 дней)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="target">Цель «вместо телефона»</label>
+                <select id="target">
+                  <option value="mix" selected>Микс идей (рекомендую)</option>
+                  <option value="study">Учёба / экзамены</option>
+                  <option value="skills">Навыки (код/дизайн/язык)</option>
+                  <option value="health">Спорт / здоровье</option>
+                  <option value="social">Друзья / общение</option>
+                  <option value="creative">Творчество</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="btnrow">
+              <button id="btnCalc">Посчитать</button>
+              <button class="btn-ghost" id="btnExample" type="button">Пример (3,5 часа)</button>
+              <button class="btn-ghost" id="btnReset" type="button">Сброс</button>
+              <span class="tiny" id="saveHint">Автосохранение включено.</span>
+            </div>
+
+            <div class="kpis" aria-live="polite">
+              <div class="kpi">
+                <div class="num" id="kpiHours">—</div>
+                <div class="cap">Всего времени</div>
+                <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+              </div>
+              <div class="kpi">
+                <div class="num" id="kpiDays">—</div>
+                <div class="cap">Это примерно</div>
+              </div>
+              <div class="kpi">
+                <div class="num" id="kpiPlan">—</div>
+                <div class="cap">План замены (коротко)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Что можно успеть на это время</h3>
+              <span id="ideaCount">—</span>
+            </div>
+            <div class="list" id="ideasList"></div>
+
+            <div class="chips" id="chips"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="card" id="check">
+        <div class="inner">
+          <h2>Чек-лист «уменьшаю телефон без боли»</h2>
+          <p>Небольшие шаги, которые реально выдержать школьнику. Отмечай — прогресс сохранится в браузере.</p>
+
+          <div class="checklist" id="checklist">
+            <!-- items inserted by JS -->
+          </div>
+
+          <div class="section" id="theory" style="margin-top:16px">
+            <div class="section-title">
+              <h3>Мини-теория (коротко и по делу)</h3>
+              <span>1–2 минуты чтения</span>
+            </div>
+
+            <details>
+              <summary>Почему телефон «затягивает»</summary>
+              <p>Лента и короткие видео дают быстрые «награды» мозгу (новизна, лайки, смешные ролики). Это усиливает привычку: <b>триггер → действие → награда</b>. Важно не «запретить телефон», а <b>заменить действие</b> и сделать альтернативу легче.</p>
+            </details>
+
+            <details>
+              <summary>Правило 10 минут</summary>
+              <p>Если хочется «тупо поскроллить», договорись с собой: <b>сначала 10 минут</b> делаю альтернативу (вода, прогулка, 10 задач, 1 страница книги). Часто желание ослабевает само.</p>
+            </details>
+
+            <details>
+              <summary>Как сделать так, чтобы получилось</summary>
+              <p>Работают не мотивационные лозунги, а среда: убери лишние иконки с первого экрана, отключи часть уведомлений, сделай «полезное» очевидным (книга на столе, коврик для спорта, открытая вкладка с задачами).</p>
+            </details>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" id="ideas" style="margin-top:18px">
+      <div class="inner">
+        <h2>Идеи «вместо телефона» для десятиклассников</h2>
+        <p>Подборка занятий с понятным результатом. Нажми «Посчитать» в калькуляторе — и сайт покажет набор идей под твою цель.</p>
+
+        <div class="list" id="staticIdeas"></div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> Индивидуальный проект. Тема: «Рациональное использование экранного времени».</div>
+      <div class="right">
+        <span>Сделано: HTML/CSS/JS • </span>
+        <a href="#calc">к калькулятору</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const ideaBank = [
+      // study
+      { key:"study1", cat:"study", icon:"🧠", title:"Разобрать 20 задач по теме", desc:"Выбери 1 слабую тему (алгебра/физика/русский) и сделай мини-прорыв.", perHour:"~5–8 задач/час", tags:["ЕГЭ/ОГЭ", "фокус"] },
+      { key:"study2", cat:"study", icon:"📒", title:"Конспект «1 страница — 1 тема»", desc:"Короткий конспект + 3 примера. Через неделю — повторение.", perHour:"1 тема/час", tags:["память", "система"] },
+      { key:"study3", cat:"study", icon:"🎧", title:"Аудио-повторение", desc:"Пока идёшь/едешь: слушай краткие разборы или сам проговаривай.", perHour:"1–2 темы/час", tags:["дорога", "без экрана"] },
+
+      // skills
+      { key:"skills1", cat:"skills", icon:"💻", title:"Мини-проект «сайт за вечер»", desc:"Сделай страничку с калькулятором/таймером. Результат — ссылка в портфолио.", perHour:"1 блок/час", tags:["GitHub", "портфолио"] },
+      { key:"skills2", cat:"skills", icon:"🌍", title:"Английский: 30 слов + 10 примеров", desc:"Слова по теме + примеры предложений. Через 2 дня — повторение.", perHour:"30 слов/час", tags:["язык", "практика"] },
+      { key:"skills3", cat:"skills", icon:"🎨", title:"Дизайн: 1 макет в Figma", desc:"Повтори чужой макет или сделай свой: кнопки, карточки, сетка.", perHour:"1 макет/час", tags:["Figma", "визуал"] },
+
+      // health
+      { key:"health1", cat:"health", icon:"🏃‍♂️", title:"Кардио 20–30 минут", desc:"Пробежка/быстрая ходьба/скакалка. Энергии станет больше, не меньше.", perHour:"2–3 тренировки/нед", tags:["самочувствие"] },
+      { key:"health2", cat:"health", icon:"🧘", title:"Растяжка + осанка", desc:"10 минут на шею/спину — особенно если много сидишь.", perHour:"6×10 минут/час", tags:["спина", "безопасно"] },
+      { key:"health3", cat:"health", icon:"🥗", title:"Еда: собрать «здоровый перекус»", desc:"Готовый план перекуса снижает тягу к сладкому и кофе.", perHour:"3–4 заготовки/час", tags:["энергия"] },
+
+      // social
+      { key:"social1", cat:"social", icon:"👥", title:"Встреча без телефонов", desc:"Договор: 30–60 минут общения/игры, телефоны в рюкзак.", perHour:"1 встреча/час", tags:["настоящие эмоции"] },
+      { key:"social2", cat:"social", icon:"☎️", title:"Созвон «как дела?»", desc:"Поддержка отношений: один звонок = меньше стресса.", perHour:"2–3 созвона/час", tags:["друзья", "семья"] },
+      { key:"social3", cat:"social", icon:"🎲", title:"Настолка/квиз", desc:"Быстрый способ «разгрузить голову» без скролла.", perHour:"1 партия/час", tags:["команда"] },
+
+      // creative
+      { key:"creative1", cat:"creative", icon:"🎸", title:"Музыка: 15 минут ежедневно", desc:"Инструмент/бит/вокал. Микрошаги дают мощный эффект.", perHour:"4×15 минут/час", tags:["ритм"] },
+      { key:"creative2", cat:"creative", icon:"✍️", title:"Писать: 300–500 слов", desc:"История, заметка, сценарий. Главное — регулярность.", perHour:"300–700 слов/час", tags:["мысли"] },
+      { key:"creative3", cat:"creative", icon:"📷", title:"Фото-прогулка с заданием", desc:"Сними 10 кадров «тени/цвет/геометрия» и сделай мини-подборку.", perHour:"1 прогулка/час", tags:["наблюдение"] },
+
+      // mix (will be composed)
+    ];
+
+    const checklistItems = [
+      { id:"c1", t:"Отключил(а) 50% уведомлений (соцсети/игры)", s:"Оставь только важное: звонки, учеба, семья." },
+      { id:"c2", t:"Убрал(а) приложения-«пожиратели» с первого экрана", s:"Чем меньше видно — тем реже открываешь." },
+      { id:"c3", t:"Поставил(а) лимит времени на 1–2 приложения", s:"Начни с малого: минус 20–30 минут в день." },
+      { id:"c4", t:"Сделал(а) «замену по умолчанию» на 10 минут", s:"Книга/прогулка/упражнения — что угодно, но заранее." },
+      { id:"c5", t:"Договорился(лась) о 1 часе без телефонов дома/с друзьями", s:"Лучше по расписанию, чем «когда-нибудь»." },
+      { id:"c6", t:"Вечером оставляю телефон не у кровати", s:"Сон — главный бустер продуктивности." },
+    ];
+
+    // ---------- Helpers ----------
+    const $ = (sel) => document.querySelector(sel);
+    const fmt = (n) => {
+      if (!isFinite(n)) return "—";
+      const rounded = Math.round(n * 10) / 10;
+      return String(rounded).replace(".", ",");
+    };
+
+    function hoursFromInput(val, unit){
+      const x = Number(val);
+      if (!isFinite(x) || x < 0) return NaN;
+      return unit === "minutes" ? x/60 : x;
+    }
+
+    function periodDays(period){
+      if (period === "week") return 7;
+      if (period === "month") return 30;
+      if (period === "year") return 365;
+      if (period === "schoolyear") return 34*7; // 34 учебные недели
+      return 7;
+    }
+
+    function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+
+    function pickIdeas(target){
+      let cats;
+      if (target === "mix") cats = ["study","skills","health","social","creative"];
+      else cats = [target];
+
+      // pick 4–6 ideas
+      const pool = ideaBank.filter(i => cats.includes(i.cat));
+      const shuffled = [...pool].sort(()=>Math.random()-0.5);
+      return shuffled.slice(0, target==="mix" ? 6 : 5);
+    }
+
+    function planText(target){
+      const map = {
+        mix:"Смешай 2–3 направления",
+        study:"Фокус на одной теме",
+        skills:"Мини-проект каждый день",
+        health:"20–30 минут движения",
+        social:"Встречи/созвоны без ленты",
+        creative:"Регулярная практика"
+      };
+      return map[target] || "—";
+    }
+
+    function renderIdea(el, idea, extra){
+      const div = document.createElement("div");
+      div.className = "idea";
+      div.innerHTML = `
+        <div class="badge" aria-hidden="true">${idea.icon}</div>
+        <div>
+          <h4>${idea.title}</h4>
+          <p>${idea.desc}</p>
+          <div class="chips">
+            <span class="chip">Категория: ${extra.catName}</span>
+            <span class="chip">${idea.perHour}</span>
+            ${(idea.tags||[]).slice(0,2).map(t=>`<span class="chip">${t}</span>`).join("")}
+          </div>
+        </div>
+      `;
+      el.appendChild(div);
+    }
+
+    function catName(cat){
+      return {
+        study:"Учёба",
+        skills:"Навыки",
+        health:"Здоровье",
+        social:"Общение",
+        creative:"Творчество"
+      }[cat] || cat;
+    }
+
+    // ---------- Checklist ----------
+    function loadChecks(){
+      try{ return JSON.parse(localStorage.getItem("ip_checks")||"{}"); }catch{ return {}; }
+    }
+    function saveChecks(obj){
+      localStorage.setItem("ip_checks", JSON.stringify(obj));
+    }
+    function renderChecklist(){
+      const wrap = $("#checklist");
+      wrap.innerHTML = "";
+      const state = loadChecks();
+
+      checklistItems.forEach(item=>{
+        const row = document.createElement("label");
+        row.className = "check";
+        row.innerHTML = `
+          <input type="checkbox" ${state[item.id] ? "checked" : ""} />
+          <div>
+            <div class="t">${item.t}</div>
+            <div class="s">${item.s}</div>
+          </div>
+        `;
+        row.querySelector("input").addEventListener("change", (e)=>{
+          const s = loadChecks();
+          s[item.id] = e.target.checked;
+          saveChecks(s);
+        });
+        wrap.appendChild(row);
+      });
+    }
+
+    // ---------- Calculator ----------
+    function saveInputs(){
+      const data = {
+        daily: $("#daily").value,
+        unit: $("#unit").value,
+        period: $("#period").value,
+        target: $("#target").value
+      };
+      localStorage.setItem("ip_inputs", JSON.stringify(data));
+    }
+
+    function loadInputs(){
+      try{
+        const data = JSON.parse(localStorage.getItem("ip_inputs")||"{}");
+        if (data.daily != null) $("#daily").value = data.daily;
+        if (data.unit) $("#unit").value = data.unit;
+        if (data.period) $("#period").value = data.period;
+        if (data.target) $("#target").value = data.target;
+      }catch{}
+    }
+
+    function calc(){
+      const dailyVal = $("#daily").value.trim();
+      const unit = $("#unit").value;
+      const period = $("#period").value;
+      const target = $("#target").value;
+
+      const dailyHours = hoursFromInput(dailyVal, unit);
+      const days = periodDays(period);
+      const totalHours = dailyHours * days;
+
+      if (!isFinite(totalHours)){
+        $("#kpiHours").textContent = "Введите число";
+        $("#kpiDays").textContent = "—";
+        $("#kpiPlan").textContent = "—";
+        $("#barFill").style.width = "0%";
+        $("#ideasList").innerHTML = "";
+        $("#ideaCount").textContent = "—";
+        $("#chips").innerHTML = "";
+        return;
+      }
+
+      // Convert hours to "days awake" approximation (16h/day)
+      const approxDaysAwake = totalHours / 16;
+      $("#kpiHours").textContent = fmt(totalHours) + " ч";
+      $("#kpiDays").textContent = fmt(approxDaysAwake) + " дн. бодрствования";
+      $("#kpiPlan").textContent = planText(target);
+
+      // progress bar relative to 200h cap for visual
+      const p = clamp01(totalHours / 200);
+      $("#barFill").style.width = (p*100).toFixed(0) + "%";
+
+      // ideas
+      const ideas = pickIdeas(target);
+      const list = $("#ideasList");
+      list.innerHTML = "";
+      ideas.forEach(idea => renderIdea(list, idea, { catName: catName(idea.cat) }));
+      $("#ideaCount").textContent = ideas.length + " идей под цель «" + (target==="mix" ? "микс" : catName(target).toLowerCase()) + "»";
+
+      // chips = "what could you do" rough equivalences
+      const chips = $("#chips");
+      chips.innerHTML = "";
+
+      // Rough equivalences (not strict science, just illustrative)
+      const eq = [];
+      eq.push({ label: "По 25 минут фокуса", val: Math.floor(totalHours*60/25) + " помодоро" });
+      eq.push({ label: "Сон +1 час/день", val: fmt(totalHours/days) + " ч/день" });
+      eq.push({ label: "Тренировки", val: Math.floor(totalHours/0.5) + "× 30 мин" });
+
+      eq.forEach(x=>{
+        const s = document.createElement("span");
+        s.className = "chip";
+        s.textContent = x.label + ": " + x.val;
+        chips.appendChild(s);
+      });
+
+      saveInputs();
+    }
+
+    // ---------- Static ideas section ----------
+    function renderStaticIdeas(){
+      const el = $("#staticIdeas");
+      el.innerHTML = "";
+      // show 10 mixed
+      const mixed = [...ideaBank].sort(()=>Math.random()-0.5).slice(0,10);
+      mixed.forEach(idea => renderIdea(el, idea, { catName: catName(idea.cat) }));
+    }
+
+    // ---------- Events ----------
+    $("#btnCalc").addEventListener("click", calc);
+    $("#btnExample").addEventListener("click", ()=>{
+      $("#daily").value = "3.5";
+      $("#unit").value = "hours";
+      $("#period").value = "schoolyear";
+      $("#target").value = "mix";
+      calc();
+    });
+    $("#btnReset").addEventListener("click", ()=>{
+      $("#daily").value = "";
+      $("#unit").value = "hours";
+      $("#period").value = "schoolyear";
+      $("#target").value = "mix";
+      localStorage.removeItem("ip_inputs");
+      $("#ideasList").innerHTML = "";
+      $("#ideaCount").textContent = "—";
+      $("#kpiHours").textContent = "—";
+      $("#kpiDays").textContent = "—";
+      $("#kpiPlan").textContent = "—";
+      $("#barFill").style.width = "0%";
+      $("#chips").innerHTML = "";
+    });
+
+    ["daily","unit","period","target"].forEach(id=>{
+      $("#"+id).addEventListener("input", saveInputs);
+      $("#"+id).addEventListener("change", saveInputs);
+    });
+
+    // ---------- Init ----------
+    $("#year").textContent = new Date().getFullYear();
+    loadInputs();
+    renderChecklist();
+    renderStaticIdeas();
+
+    // If inputs present, auto-calc once
+    if ($("#daily").value.trim() !== "") calc();
+  </script>
+</body>
 </html>
