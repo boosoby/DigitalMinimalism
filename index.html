@@ -78,6 +78,29 @@
         }
         .nav-links a:hover { color: var(--primary); }
 
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+        .btn-nav { background: var(--primary); color: var(--white); padding: 12px 25px; border-radius: 15px; font-size: 14px; }
+        .btn-primary { background: var(--text-main); color: var(--white); padding: 20px 40px; }
+        .btn-outline { background: var(--white); color: var(--text-main); padding: 20px 40px; border: 1px solid #e2e8f0; }
+        .btn-action { width: 100%; margin-top: 20px; background: var(--primary); color: white; padding: 20px; font-size: 16px; font-weight: 800; border-radius: 20px; }
+        
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         /* Hero Секция */
         .hero { padding: 120px 0 100px; text-align: center; position: relative; }
         .hero-badge {
@@ -185,7 +208,6 @@
             justify-content: center;
             font-size: 30px;
             color: var(--primary);
-            /* ЕЩЁ БОЛЬШЕ ОТСТУП ОТ ИКОНКИ ДО ТЕГА */
             margin-bottom: 48px; 
             transition: var(--transition);
         }
@@ -207,7 +229,7 @@
         /* Цитаты */
         .quotes-section { background: #1e293b; color: var(--white); border-radius: 60px; padding: 80px 40px; margin-left: 25px; margin-right: 25px; text-align: center; }
         .quote-icon { font-size: 50px; color: var(--primary); margin-bottom: 30px; opacity: 0.5; }
-        .quote-text { font-size: 32px; font-weight: 700; font-style: italic; max-width: 900px; margin: 0 auto 30px; line-height: 1.4; }
+        .quote-text { font-size: 42px; font-weight: 700; font-style: italic; max-width: 900px; margin: 0 auto 30px; line-height: 1.4; }
 
         /* Чек-лист */
         .check-card {
@@ -230,7 +252,7 @@
             border: 2px solid transparent;
         }
         .check-item:hover { background: #f1f5f9; }
-        .check-item input { width: 25px; height: 25px; margin-right: 20px; accent-color: var(--primary); }
+        .check-item input { width: 25px; height: 25px; margin-right: 20px; accent-color: var(--primary); flex-shrink: 0; }
         .check-item span { font-size: 18px; font-weight: 600; }
         .check-item.active { border-color: var(--primary); background: #eff6ff; }
         .check-item.active span { text-decoration: line-through; opacity: 0.5; }
@@ -281,11 +303,16 @@
         .modal-body p { font-size: 18px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.8; }
         .modal-body strong { color: var(--text-main); font-weight: 700; }
         
-        /* Скроллбар в модалке */
         .modal-card::-webkit-scrollbar { width: 8px; }
         .modal-card::-webkit-scrollbar-track { background: transparent; margin: 30px; }
         .modal-card::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
+        footer { padding: 80px 0; background: #f1f5f9; text-align: center; margin-top: 100px; }
+
+        /* =========================================
+           МЕДИА-ЗАПРОСЫ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ 
+           ========================================= */
+           
         @media (max-width: 968px) {
             .calc-wrapper { grid-template-columns: 1fr; }
             .hero h1 { font-size: 48px; }
@@ -293,7 +320,70 @@
             .modal-card { padding: 40px 30px; }
         }
 
-        footer { padding: 80px 0; background: #f1f5f9; text-align: center; margin-top: 100px; }
+        @media (max-width: 768px) {
+            body { line-height: 1.5; font-size: 15px; }
+            
+            /* Навигация */
+            .navbar { padding: 15px 0; }
+            .logo { font-size: 22px; }
+            .btn-nav { padding: 8px 16px; font-size: 13px; border-radius: 12px; }
+            
+            /* Hero секция */
+            .hero { padding: 60px 0 50px; }
+            .hero-badge { margin-bottom: 15px; font-size: 12px; padding: 6px 15px; }
+            .hero h1 { font-size: 36px; margin-bottom: 20px; letter-spacing: -1px; }
+            .hero p { font-size: 16px; margin-bottom: 30px; padding: 0 10px; }
+            
+            /* Кнопки */
+            .btn-group { flex-direction: column; gap: 12px; }
+            .btn-group .btn { width: 100%; padding: 16px 20px; font-size: 16px; border-radius: 16px; }
+
+            /* Общие отступы секций */
+            .section-padding { padding: 60px 0; }
+            .section-head { margin-bottom: 40px; }
+            .section-head h2 { font-size: 28px; margin-bottom: 15px; }
+            .section-head p { font-size: 15px; }
+
+            /* Калькулятор */
+            .calc-wrapper { padding: 25px; gap: 30px; border-radius: 30px; }
+            .calc-inputs { gap: 15px; }
+            .input-card { padding: 20px; border-radius: 20px; }
+            .input-card input { font-size: 28px; }
+            .calc-info h3 { font-size: 22px; }
+            .result-display { padding: 25px; min-height: 150px; border-radius: 20px; }
+            .result-line { font-size: 15px; }
+            .result-line strong { font-size: 22px; }
+            .result-sub { font-size: 14px; }
+            .btn-action { padding: 16px; font-size: 15px; border-radius: 16px; }
+
+            /* Карточки */
+            .grid-container { grid-template-columns: 1fr; gap: 20px; }
+            .feature-card { padding: 25px; border-radius: 25px; }
+            .icon-box { width: 50px; height: 50px; font-size: 22px; margin-bottom: 20px; border-radius: 15px; }
+            .feature-card h3 { font-size: 20px; }
+            .feature-card p { font-size: 14px; margin-bottom: 15px; }
+
+            /* Цитата */
+            .quotes-section { padding: 40px 20px; border-radius: 30px; margin: 0 15px; }
+            .quote-icon { font-size: 30px; margin-bottom: 15px; }
+            .quote-text { font-size: 20px; margin-bottom: 20px; }
+
+            /* Чек-лист */
+            .check-card { padding: 25px; border-radius: 30px; }
+            .check-item { padding: 15px; border-radius: 15px; margin-bottom: 10px; }
+            .check-item input { width: 20px; height: 20px; margin-right: 15px; }
+            .check-item span { font-size: 14px; }
+
+            /* Модальное окно */
+            .modal-card { padding: 30px 20px; border-radius: 25px; }
+            .close-modal { top: 15px; right: 15px; width: 40px; height: 40px; font-size: 18px; }
+            .modal-body h2 { font-size: 24px; margin-bottom: 15px; }
+            .modal-body p { font-size: 15px; margin-bottom: 15px; line-height: 1.6; }
+
+            footer { padding: 50px 0 40px; margin-top: 60px; }
+            footer .logo { font-size: 22px; }
+            footer p { font-size: 13px; line-height: 1.5; }
+        }
     </style>
 </head>
 <body>
@@ -302,14 +392,14 @@
 
     <header>
         <div class="container navbar">
-            <div class="logo" style="margin-left: 25px;">Точка Фокуса.</div>
+            <div class="logo" style="margin-left: 24px;">Точка Фокуса.</div>
             <nav class="nav-links">
                 <a href="#about">О проекте</a>
                 <a href="#calc">Калькулятор</a>
                 <a href="#alternatives">Идеи</a>
                 <a href="#checklist">Действуй</a>
             </nav>
-            <a href="#checklist" class="btn" style="background: var(--primary); color: white; padding: 12px 25px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-right: 25px; font-size: 14px;">Начать детокс</a>
+            <a href="#checklist" class="btn btn-nav" style="margin-right: 24px;">Начать детокс</a>
         </div>
     </header>
 
@@ -318,9 +408,9 @@
             <div class="hero-badge">Исследовательский проект 2026</div>
             <h1>Твой фокус — <br><span style="color: var(--primary)">твоя суперсила.</span></h1>
             <p>Мы проводим в смартфонах в среднем 4.5 часа в день. Это 32 часа в неделю или 70 дней в году. Узнай, что ты можешь создать за это время.</p>
-            <div style="display: flex; gap: 20px; justify-content: center;">
-                <a href="#calc" class="btn" style="background: var(--text-main); color: white; padding: 20px 40px; border-radius: 20px; text-decoration: none; font-weight: 700;">Перейти к расчету</a>
-                <a href="#alternatives" class="btn" style="background: white; color: var(--text-main); padding: 20px 40px; border-radius: 20px; text-decoration: none; font-weight: 700; border: 1px solid #e2e8f0;">Варианты досуга</a>
+            <div class="btn-group">
+                <a href="#calc" class="btn btn-primary">Перейти к расчету</a>
+                <a href="#alternatives" class="btn btn-outline">Варианты досуга</a>
             </div>
         </div>
     </section>
@@ -347,7 +437,7 @@
                     <div class="result-display" id="resultBlock">
                         <p class="result-line" style="color: var(--text-muted); font-size: 16px;">Нажми на кнопку, чтобы увидеть свои результаты...</p>
                     </div>
-                    <button onclick="calculate()" style="width: 100%; margin-top: 20px; background: var(--primary); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 16px;">Посчитать упущенное время</button>
+                    <button class="btn btn-action" onclick="calculate()">Посчитать упущенное время</button>
                 </div>
             </div>
         </div>
@@ -364,7 +454,13 @@
         </div>
     </section>
 
-
+    <section class="quotes-section">
+        <div class="container">
+            <i class="fas fa-quote-right quote-icon"></i>
+            <div class="quote-text">«Понимание того, на что не стоит обращать внимания, столь же важно, как понимание того, на чём следует сфокусироваться»</div>
+            <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">Уоррен Баффет</div>
+        </div>
+    </section>
 
     <section id="checklist" class="section-padding">
         <div class="container">
@@ -414,7 +510,6 @@
     </footer>
 
     <script>
-        // === ОБНОВЛЕННЫЕ ТЕКСТЫ (без звездочек, с елочками и HTML) ===
         const cardData = [
             { id: 'read', icon: 'fas fa-book-open', tag: 'Интеллект', title: 'Глубокое чтение', desc: 'Как чтение лонгридов меняет структуру серого вещества.', 
                 full: { title: 'Сила печатного слова', text: `
@@ -493,23 +588,18 @@
             result.style.opacity = '0';
 
             setTimeout(() => {
-                // Исключение: Отрицательные значения
                 if (age < 0 || hours < 0) {
                     result.innerHTML = `<p class="result-line error-text">Значения не могут быть отрицательными. Проверь ввод. 🧐</p>`;
                 }
-                // Исключение: Нереальный возраст (120+)
                 else if (age > 120) {
                     result.innerHTML = `<p class="result-line">Похоже, вы открыли секрет долголетия! 🌟 В таком возрасте каждая минута офлайн — это бесценный дар.</p>`;
                 }
-                // Исключение: Ранний возраст (до 5 лет)
                 else if (age < 5) {
                     result.innerHTML = `<p class="result-line">В первые годы жизни мозг формируется через сенсорный опыт и движение. Цифровые экраны в этом возрасте лучше свести к минимуму. 🌱</p>`;
                 } 
-                // Исключение: Ошибка ввода часов (>24)
                 else if (hours > 24) {
                     result.innerHTML = `<p class="result-line error-text">В сутках всего 24 часа. Попробуй ввести реальное значение. ⏳</p>`;
                 }
-                // Исключение: Возраст от 80 до 120
                 else if (age >= averageLifeExpectancy) {
                     const yearHours = Math.round(hours * 365);
                     result.innerHTML = `
@@ -517,7 +607,6 @@
                         <p class="result-sub">При текущем ритме вы уделяете смартфону <strong>${yearHours.toLocaleString('ru-RU')}</strong> ч. в год. Это время можно направить на передачу опыта или творчество.</p>
                     `;
                 }
-                // Стандартный расчет (от 5 до 79 лет)
                 else {
                     const monthHours = Math.round(hours * 30);
                     const yearHours = Math.round(hours * 365);
@@ -540,7 +629,7 @@
                 <h2>${data.full.title}</h2>
                 <div style="text-align: left;">${data.full.text}</div>
                 <div style="text-align: center; margin-top: 30px;">
-                    <button onclick="closeModal(event)" class="btn" style="background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-weight: 700; cursor: pointer;">Ясно, спасибо</button>
+                    <button onclick="closeModal(event)" class="btn btn-primary" style="padding: 15px 30px; border-radius: 15px;">Ясно, спасибо</button>
                 </div>
             `;
             document.getElementById('modalOverlay').classList.add('open');
@@ -565,7 +654,7 @@
             const total = document.querySelectorAll('.check-item').length;
             const checked = document.querySelectorAll('.check-item input:checked').length;
             const percent = Math.round((checked / total) * 100);
-            document.getElementById('checkStats').innerText = `Твой прогресс: ${percent}% ${percent === 100 ? '🔥' : ''}`;
+            document.getElementById('checkStats').innerText = `Выполнено: ${percent}% ${percent === 100 ? '🔥' : ''}`;
         }
 
         const observer = new IntersectionObserver((entries) => {
